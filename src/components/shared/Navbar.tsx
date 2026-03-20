@@ -1,6 +1,6 @@
+import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Link from "next/link";
-import { auth } from "../../lib/auth";
 
 export default async function Navbar() {
   const session = await auth.api.getSession({
@@ -9,7 +9,7 @@ export default async function Navbar() {
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-sm">
-      <div className="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
+      <div className=" flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
         <Link
           href="/"
           className="text-2xl font-extrabold text-indigo-700 tracking-tighter"
@@ -34,8 +34,8 @@ export default async function Navbar() {
             </div>
           ) : (
             <Link
-              href="/auth/sign-in"
-              className="bg-primary text-white px-6 py-2.5 rounded-full font-bold text-sm"
+              href="/auth"
+              className=" editorial-gradient text-on-primary px-6 py-2.5 rounded-full font-bold text-sm transition-transform active:scale-95 duration-150 ease-in-out"
             >
               Get Started
             </Link>
