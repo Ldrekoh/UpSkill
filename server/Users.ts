@@ -5,31 +5,31 @@ import { user } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
 export const getCurrentUser = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
 
-  if (!session) {
-    redirect("/auth/sign-in");
+    // Si pas de session, on renvoie null proprement, SANS REDIRECT
+    if (!session) {
+      return { session: null, currentUser: null };
+    }
+
+    const currentUser = await db.query.user.findFirst({
+      where: eq(user.id, session.user.id),
+    });
+
+    return {
+      session,
+      currentUser: currentUser ?? null,
+    };
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l'utilisateur:", error);
+    return { session: null, currentUser: null };
   }
-
-  const currentUser = await db.query.user.findFirst({
-    where: eq(user.id, session.user.id),
-  });
-
-  if (!currentUser) {
-    redirect("/auth/sign-in");
-  }
-
-  return {
-    ...session,
-    currentUser,
-  };
 };
-
 export const signIn = async (email: string, password: string) => {
   try {
     await auth.api.signInEmail({

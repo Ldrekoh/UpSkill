@@ -101,6 +101,7 @@ export const skills = pgTable("skills", {
   category: text("category").notNull(),
   tokenCost: integer("token_cost").notNull(),
   description: text("description"),
+  duration: integer("duration").notNull().default(60),
   isActive: boolean("is_active").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
@@ -114,6 +115,7 @@ export const bookings = pgTable("bookings", {
     .notNull()
     .references(() => user.id),
   scheduledFor: timestamp("scheduled_for"),
+  endTime: timestamp("end_time"),
   status: text("status").default("scheduled").notNull(), // 'scheduled', 'completed', 'cancelled'
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
