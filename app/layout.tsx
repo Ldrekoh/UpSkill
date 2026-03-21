@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Figtree } from "next/font/google";
-import "./globals.css";
 import { cn } from "@/src/lib/utils";
+import type { Metadata } from "next";
+import { Figtree, Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
+import "./globals.css";
 
 const figtree = Figtree({subsets:['latin'],variable:'--font-sans'});
 
@@ -32,6 +33,7 @@ export default function RootLayout({
       >
         {children}
       </body>
+      <Toaster />
     </html>
   );
 }
