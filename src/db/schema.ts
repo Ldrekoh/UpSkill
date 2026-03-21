@@ -189,4 +189,10 @@ export const schema = {
   bookings,
   transactions,
   reviews,
+
+  userRelations,
+  sessionRelations,
+  accountRelations,
+  skillsRelations,
+  bookingsRelations,
 };
