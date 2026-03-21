@@ -83,7 +83,7 @@ export const createSkill = async (
 export const getMySkills = async () => {
   try {
     const { currentUser } = await getCurrentUser();
-    if (!currentUser) return { success: false, message: "Unauthorized" };
+    if (!currentUser) return { success: false, skills: [] };
 
     const data = await db.query.skills.findMany({
       where: eq(skills.mentorId, currentUser.id),
@@ -98,7 +98,7 @@ export const getMySkills = async () => {
     };
   } catch (error) {
     console.error("Error fetching my skills:", error);
-    return [];
+    return { success: false, skills: [] };
   }
 };
 

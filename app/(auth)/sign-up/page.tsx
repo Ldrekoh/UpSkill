@@ -1,12 +1,12 @@
-"use client";
 import { SignUpForm } from "@/components/forms/SignUpForm";
-import { Coins, Verified } from "lucide-react"; // Ou tes composants Icons.tsx personnalisés
+import { Coins, Verified } from "lucide-react";
 
+// Pas de "use client" — SignUpForm gère sa propre directive.
 export default function SignUpPage() {
   return (
     <div className="min-h-[calc(100vh-80px)] flex items-center justify-center p-6 md:p-12 bg-surface">
       <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        {/* Section Gauche : Brand & Narrative */}
+        {/* Section Gauche */}
         <div className="hidden lg:flex flex-col space-y-10">
           <div className="space-y-6">
             <span className="text-primary font-headline font-bold text-2xl tracking-tighter">
@@ -26,7 +26,6 @@ export default function SignUpPage() {
             </p>
           </div>
 
-          {/* Badge de confiance */}
           <div className="flex items-center gap-5 bg-surface-container-low p-6 rounded-2xl border border-outline-variant/10 max-w-sm shadow-sm">
             <div className="w-14 h-14 rounded-full bg-secondary-container flex items-center justify-center text-white shadow-inner">
               <Verified size={28} />
@@ -41,7 +40,6 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          {/* Carte Bonus */}
           <div className="relative overflow-hidden bg-primary-container p-8 rounded-2xl text-white shadow-xl shadow-primary/20 group">
             <div className="relative z-10 flex flex-col gap-3">
               <div className="flex items-center gap-2">
@@ -60,16 +58,13 @@ export default function SignUpPage() {
                 sessions upon registration.
               </p>
             </div>
-            {/* Effet visuel d'arrière-plan */}
-            <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-secondary rounded-full blur-[80px] opacity-30 group-hover:opacity-50 transition-opacity"></div>
+            <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-secondary rounded-full blur-[80px] opacity-30 group-hover:opacity-50 transition-opacity" />
           </div>
         </div>
 
-        {/* Section Droite : Le Formulaire */}
+        {/* Section Droite */}
         <div className="relative flex justify-center">
-          {/* Décoration subtile derrière le form sur mobile */}
-          <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl lg:hidden"></div>
-
+          <div className="absolute -top-20 -left-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl lg:hidden" />
           <SignUpForm />
         </div>
       </div>

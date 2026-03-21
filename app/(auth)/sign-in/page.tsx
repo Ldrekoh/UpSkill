@@ -1,15 +1,16 @@
-"use client";
 import { SignInForm } from "@/components/forms/SignInForm";
 import { LayoutGrid, Sparkles } from "lucide-react";
 
+// Pas de "use client" — la page est un Server Component.
+// SignInForm gère lui-même sa propre directive "use client".
 export default function SignInPage() {
   return (
     <main className="min-h-screen flex flex-col lg:flex-row items-stretch bg-surface">
-      {/* Left Panel - Atelier Feel */}
+      {/* Left Panel */}
       <section className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-primary items-center justify-center p-20">
         <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-secondary-container blur-[120px]"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-primary-container blur-[100px]"></div>
+          <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-secondary-container blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-primary-container blur-[100px]" />
         </div>
 
         <div className="relative z-10 space-y-8 max-w-xl">

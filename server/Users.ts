@@ -12,7 +12,6 @@ export const getCurrentUser = async () => {
       headers: await headers(),
     });
 
-    // Si pas de session, on renvoie null proprement, SANS REDIRECT
     if (!session) {
       return { session: null, currentUser: null };
     }
