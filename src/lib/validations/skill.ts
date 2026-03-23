@@ -11,6 +11,7 @@ export const skillSchema = z.object({
     .number()
     .min(15, "La session doit durer au moins 15 minutes"),
   isActive: z.boolean().default(true),
+  learningOutcomes: z.array(z.string()).default([]),
 });
 
 export type SkillValues = z.infer<typeof skillSchema>;

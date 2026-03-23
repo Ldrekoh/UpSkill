@@ -6,7 +6,9 @@ import {
   LogOut,
   Sparkles,
   Wallet,
+  User,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -19,8 +21,10 @@ type User = {
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/skills", label: "My Skills", icon: Sparkles },
+  { href: "/dashboard/skills/my-skills", label: "My Skills", icon: Sparkles },
   { href: "/dashboard/bookings", label: "Bookings", icon: CalendarDays },
+  { href: "/explore", label: "Explore", icon: CalendarDays },
+  { href: "/dashboard/profile", label: "Profile", icon: User },
 ];
 
 export function DashboardSidebar({ user }: { user: User }) {
@@ -64,7 +68,7 @@ export function DashboardSidebar({ user }: { user: User }) {
       </nav>
 
       {/* Token balance */}
-      <div className="mx-3 mb-4 p-5 rounded-[1.5rem] bg-primary text-on-primary shadow-xl shadow-primary/20 relative overflow-hidden group">
+      <div className="mx-3 mb-4 p-5 rounded-3xl bg-primary text-on-primary shadow-xl shadow-primary/20 relative overflow-hidden group">
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2 opacity-80">
             <Wallet size={14} />
@@ -87,13 +91,15 @@ export function DashboardSidebar({ user }: { user: User }) {
       <div className="px-3 pb-6">
         <div className="flex items-center gap-3 px-3 py-3 rounded-2xl bg-surface-container-low/50 border border-outline-variant/5">
           {user.image ? (
-            <img
+            <Image
               src={user.image}
-              className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
               alt={user.name || "User"}
+              width={40} // Correspond à w-10 (10 * 4px)
+              height={40} // Correspond à h-10
+              className="rounded-full border-2 border-white shadow-sm"
             />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-on-surface text-surface flex items-center justify-center font-bold text-xs flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-on-surface text-surface flex items-center justify-center font-bold text-xs shrink-0">
               {user.name?.[0]?.toUpperCase() ?? "U"}
             </div>
           )}

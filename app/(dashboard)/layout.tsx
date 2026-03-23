@@ -8,7 +8,7 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { currentUser } = await getCurrentUser();
-  if (!currentUser) redirect("/auth/sign-in");
+  if (!currentUser) redirect("/sign-in");
 
   return (
     <div className="flex min-h-screen bg-surface-container-lowest">

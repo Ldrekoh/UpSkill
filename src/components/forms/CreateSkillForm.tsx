@@ -1,7 +1,15 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Clock, Coins, Loader2, Sparkles } from "lucide-react";
+import {
+  Clock,
+  Coins,
+  Loader2,
+  Sparkles,
+  CheckCircle2,
+  Plus,
+  X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -30,6 +38,73 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
+// --- Sous-composant pour les points d'apprentissage ---
+const LearningOutcomesField = ({
+  value,
+  onChange,
+}: {
+  value: string[];
+  onChange: (val: string[]) => void;
+}) => {
+  const [currentInput, setCurrentInput] = useState("");
+
+  const addItem = () => {
+    if (currentInput.trim()) {
+      onChange([...value, currentInput.trim()]);
+      setCurrentInput("");
+    }
+  };
+
+  const removeItem = (index: number) => {
+    onChange(value.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {value.map((item, index) => (
+          <div
+            key={index}
+            className="flex items-center gap-3 p-3 bg-surface-container-low rounded-xl border border-outline-variant/5 group"
+          >
+            <CheckCircle2 size={16} className="text-primary shrink-0" />
+            <span className="text-xs font-medium grow truncate">{item}</span>
+            <button
+              type="button"
+              onClick={() => removeItem(index)}
+              className="hover:text-error transition-colors"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="flex gap-2">
+        <Input
+          placeholder="What will they learn?"
+          value={currentInput}
+          onChange={(e) => setCurrentInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addItem();
+            }
+          }}
+          className="bg-surface-container-low border-none rounded-xl h-12"
+        />
+        <Button
+          type="button"
+          onClick={addItem}
+          size="icon"
+          className="h-12 w-12 rounded-xl bg-on-surface"
+        >
+          <Plus size={20} />
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 export const CreateSkillForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -43,6 +118,7 @@ export const CreateSkillForm = () => {
       tokenCost: 1,
       duration: 60,
       isActive: true,
+      learningOutcomes: [], // Initialisé comme tableau vide
     },
   });
 
@@ -55,6 +131,7 @@ export const CreateSkillForm = () => {
       values.tokenCost,
       values.duration,
       values.isActive,
+      values.learningOutcomes, // <--- Transmission du tableau
     );
 
     if (result.success) {
@@ -142,7 +219,6 @@ export const CreateSkillForm = () => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="duration"
@@ -158,6 +234,9 @@ export const CreateSkillForm = () => {
                           <Input
                             {...field}
                             type="number"
+                            onChange={(e) =>
+                              field.onChange(parseInt(e.target.value))
+                            }
                             className="pl-12 h-14 bg-surface-container-low border-none rounded-xl"
                           />
                         </FormControl>
@@ -169,6 +248,28 @@ export const CreateSkillForm = () => {
               />
             </div>
 
+            {/* Learning Outcomes - LA NOUVELLE SECTION */}
+            <FormField
+              control={form.control}
+              name="learningOutcomes"
+              render={({ field }) => (
+                <FormItem>
+                  <Field>
+                    <FieldLabel className="text-xs font-bold uppercase tracking-widest text-outline">
+                      What you'll learn (Points)
+                    </FieldLabel>
+                    <FormControl>
+                      <LearningOutcomesField
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </Field>
+                </FormItem>
+              )}
+            />
+
             {/* Description */}
             <FormField
               control={form.control}
@@ -177,14 +278,14 @@ export const CreateSkillForm = () => {
                 <FormItem>
                   <Field>
                     <FieldLabel className="text-xs font-bold uppercase tracking-widest text-outline">
-                      Description
+                      Full Description
                     </FieldLabel>
                     <FormControl>
                       <Textarea
                         {...field}
-                        rows={5}
-                        placeholder="What will the learner achieve?"
-                        className="bg-surface-container-low border-none rounded-xl p-4"
+                        rows={4}
+                        placeholder="Describe the session details..."
+                        className="bg-surface-container-low border-none rounded-xl p-4 resize-none"
                       />
                     </FormControl>
                     <FormMessage />
@@ -211,6 +312,9 @@ export const CreateSkillForm = () => {
                         <input
                           {...field}
                           type="number"
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value))
+                          }
                           className="bg-transparent border-none text-2xl font-headline font-extrabold w-20 focus:ring-0"
                         />
                       </FormControl>
@@ -218,22 +322,27 @@ export const CreateSkillForm = () => {
                   </div>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="isActive"
                 render={({ field }) => (
-                  <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm">
-                    <span className="text-xs font-bold text-on-surface">
-                      Active Listing
-                    </span>
+                  <FormItem className="flex flex-row items-center justify-between gap-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-outline-variant/5">
+                    <div className="space-y-0.5">
+                      <p className="text-xs font-bold text-on-surface">
+                        Active Listing
+                      </p>
+                      <p className="text-[10px] text-outline-variant">
+                        Visible in exploration
+                      </p>
+                    </div>
                     <FormControl>
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                        type="button"
                       />
                     </FormControl>
-                  </div>
+                  </FormItem>
                 )}
               />
             </div>

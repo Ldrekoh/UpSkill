@@ -112,7 +112,7 @@ export const SignUpForm = () => {
                         />
                       </FormControl>
                       <FieldDescription className="text-[10px]">
-                        We'll never share your email.
+                        We&apos;ll never share your email.
                       </FieldDescription>
                       <FormMessage />
                     </Field>
@@ -183,7 +183,7 @@ export const SignUpForm = () => {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-14 bg-gradient-to-br from-primary to-primary-container font-headline font-bold text-lg shadow-lg shadow-primary/20"
+              className="w-full h-14 bg-linear-to-br from-primary to-primary-container font-headline font-bold text-lg shadow-lg shadow-primary/20"
             >
               {isLoading ? (
                 <Loader2 className="animate-spin" />
@@ -199,7 +199,7 @@ export const SignUpForm = () => {
             Already part of the atelier?
             <Link
               className="text-primary font-bold hover:underline ml-1"
-              href="/auth/sign-in"
+              href="/sign-in"
             >
               Sign In
             </Link>

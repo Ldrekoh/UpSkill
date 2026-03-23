@@ -15,7 +15,7 @@ export const SignOutButton = ({ className }: { className?: string }) => {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push("/auth/sign-in");
+          router.push("/");
           router.refresh();
         },
       },

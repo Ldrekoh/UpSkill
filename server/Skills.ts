@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db/drizzle";
-import { skills } from "@/db/schema";
+import { skills, user } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "./Users";
@@ -45,6 +45,7 @@ export const createSkill = async (
   token_cost: number,
   duration: number,
   isActive: boolean,
+  learningOutcomes: string[],
 ) => {
   try {
     const { currentUser } = await getCurrentUser();
@@ -63,6 +64,7 @@ export const createSkill = async (
         duration,
         isActive,
         mentorId: currentUser.id,
+        learningOutcomes,
       })
       .returning();
 
@@ -83,22 +85,29 @@ export const createSkill = async (
 export const getMySkills = async () => {
   try {
     const { currentUser } = await getCurrentUser();
-    if (!currentUser) return { success: false, skills: [] };
+    if (!currentUser) return { success: false, data: null }; // Changé ici
 
-    const data = await db.query.skills.findMany({
-      where: eq(skills.mentorId, currentUser.id),
+    const userData = await db.query.user.findFirst({
+      where: eq(user.id, currentUser.id),
       with: {
-        mentor: true,
+        skills: true,
+        bookingsAsMentor: {
+          with: { learner: true, skill: true },
+          orderBy: (bookings, { desc }) => [desc(bookings.createdAt)],
+          limit: 5,
+        },
+        transactions: true,
       },
     });
+
     return {
       success: true,
-      message: "My skills fetched successfully",
-      skills: data,
+      message: "My dashboard data fetched successfully",
+      data: userData, // On renvoie l'objet complet sous la clé 'data'
     };
   } catch (error) {
-    console.error("Error fetching my skills:", error);
-    return { success: false, skills: [] };
+    console.error("Error fetching dashboard data:", error);
+    return { success: false, data: null };
   }
 };
 

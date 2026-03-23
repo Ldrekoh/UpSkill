@@ -84,11 +84,11 @@ export const SignInForm = () => {
       </div> */}
 
       <div className="relative flex items-center py-2">
-        <div className="flex-grow border-t border-outline-variant/30"></div>
+        <div className="grow border-t border-outline-variant/30"></div>
         <span className="mx-4 text-[10px] font-bold text-outline uppercase tracking-widest">
           or email
         </span>
-        <div className="flex-grow border-t border-outline-variant/30"></div>
+        <div className="grow border-t border-outline-variant/30"></div>
       </div>
 
       <Form {...form}>
@@ -187,7 +187,7 @@ export const SignInForm = () => {
 
           <Button
             disabled={isLoading}
-            className="w-full h-14 bg-gradient-to-br from-primary to-primary-container text-white font-bold text-lg rounded-xl shadow-xl shadow-primary/20 transition-all hover:scale-[1.01]"
+            className="w-full h-14 bg-linear-to-br from-primary to-primary-container text-white font-bold text-lg rounded-xl shadow-xl shadow-primary/20 transition-all hover:scale-[1.01]"
           >
             {isLoading ? (
               <Loader2 className="animate-spin" />
@@ -202,7 +202,7 @@ export const SignInForm = () => {
         New to the Atelier?
         <Link
           className="text-primary font-bold hover:underline ml-1"
-          href="/auth/sign-up"
+          href="/sign-up"
         >
           Create an account
         </Link>

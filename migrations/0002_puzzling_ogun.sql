@@ -1,0 +1,1 @@
+ALTER TABLE "skills" ADD COLUMN "learning_outcomes" text[] DEFAULT '{}'::text[] NOT NULL;

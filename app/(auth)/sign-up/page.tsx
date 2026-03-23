@@ -1,3 +1,4 @@
+"use client";
 import { SignUpForm } from "@/components/forms/SignUpForm";
 import { Coins, Verified } from "lucide-react";
 
@@ -14,7 +15,7 @@ export default function SignUpPage() {
             </span>
             <h1 className="text-6xl font-headline font-extrabold text-on-surface leading-[1.1] tracking-tight">
               Enter the <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-secondary">
                 Digital Atelier
               </span>{" "}
               <br />
@@ -53,7 +54,7 @@ export default function SignUpPage() {
               <h3 className="text-3xl font-headline font-extrabold">
                 Bonus 2 Tokens
               </h3>
-              <p className="text-sm opacity-80 font-body leading-snug max-w-[280px]">
+              <p className="text-sm opacity-80 font-body leading-snug max-w-70">
                 Start your journey with complimentary access to premium workshop
                 sessions upon registration.
               </p>

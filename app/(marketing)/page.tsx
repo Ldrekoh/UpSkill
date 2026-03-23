@@ -7,12 +7,12 @@ export default function HomePage() {
       <section className="relative overflow-hidden min-h-[92vh] flex items-center px-6">
         {/* Blobs décoratifs */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full bg-primary/8 blur-[120px]" />
-          <div className="absolute top-1/3 right-0 w-[400px] h-[400px] rounded-full bg-secondary/10 blur-[100px]" />
-          <div className="absolute bottom-0 left-1/3 w-[300px] h-[300px] rounded-full bg-tertiary/8 blur-[80px]" />
+          <div className="absolute -top-32 -left-32 w-150 h-150 rounded-full bg-primary/8 blur-[120px]" />
+          <div className="absolute top-1/3 right-0 w-100 h-100 rounded-full bg-secondary/10 blur-[100px]" />
+          <div className="absolute bottom-0 left-1/3 w-75 h-75 rounded-full bg-tertiary/8 blur-[80px]" />
         </div>
 
-        <div className="relative z-10 max-w-screen-xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Texte */}
           <div className="space-y-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
@@ -27,7 +27,7 @@ export default function HomePage() {
               <br />
               you{" "}
               <span className="relative inline-block">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%] animate-[gradient_4s_ease_infinite]">
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-primary via-secondary to-primary bg-size-[200%] animate-[gradient_4s_ease_infinite]">
                   master.
                 </span>
               </span>
@@ -51,10 +51,12 @@ export default function HomePage() {
                 className="group px-8 py-4 bg-primary text-on-primary rounded-2xl font-headline font-bold text-lg hover:scale-[1.03] active:scale-[0.98] transition-all shadow-lg shadow-primary/25 flex items-center gap-3"
               >
                 Explore Skills
-                <span className="group-hover:translate-x-1 transition-transform">→</span>
+                <span className="group-hover:translate-x-1 transition-transform">
+                  →
+                </span>
               </Link>
               <Link
-                href="/auth/sign-up"
+                href="/sign-up"
                 className="px-8 py-4 border border-outline-variant/50 text-on-surface rounded-2xl font-headline font-bold text-lg hover:bg-surface-container transition-colors"
               >
                 Join for free
@@ -141,13 +143,13 @@ export default function HomePage() {
           <span className="text-xs text-outline uppercase tracking-widest">
             Explore
           </span>
-          <div className="w-px h-8 bg-gradient-to-b from-outline to-transparent" />
+          <div className="w-px h-8 bg-linear-to-b from-outline to-transparent" />
         </div>
       </section>
 
       {/* ── Stats ────────────────────────────────────────────── */}
       <section className="py-16 border-y border-outline-variant/10 bg-surface-container-low/50">
-        <div className="max-w-screen-xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
             { value: "12K+", label: "Active Mentors" },
             { value: "340+", label: "Skills Available" },
@@ -165,7 +167,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Features ─────────────────────────────────────────── */}
-      <section className="py-28 px-6 max-w-screen-xl mx-auto">
+      <section className="py-28 px-6 max-w-7xl mx-auto">
         <div className="text-center mb-20">
           <span className="text-primary text-xs font-bold uppercase tracking-[0.2em]">
             How it works
@@ -211,7 +213,9 @@ export default function HomePage() {
               key={step}
               className={`relative p-8 rounded-3xl border ${color} group hover:-translate-y-1 transition-transform`}
             >
-              <span className={`text-6xl font-headline font-extrabold ${accent} opacity-10 absolute top-6 right-8`}>
+              <span
+                className={`text-6xl font-headline font-extrabold ${accent} opacity-10 absolute top-6 right-8`}
+              >
                 {step}
               </span>
               <div className="text-4xl mb-6">{emoji}</div>
