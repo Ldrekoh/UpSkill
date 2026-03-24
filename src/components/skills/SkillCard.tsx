@@ -1,84 +1,102 @@
-import { Coins, Star, Timer, ArrowUpRight } from "@/components/shared/Icons";
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
+import { Clock, Coins, Star, ArrowUpRight } from "lucide-react";
 
-export const SkillCard = ({ skill }: { skill: any }) => {
+// On définit un type local basé sur ton schéma
+interface SkillCardProps {
+  skill: {
+    id: string;
+    title: string;
+    category: string;
+    tokenCost: number;
+    duration: number;
+    mentor: {
+      name: string;
+      image: string | null;
+      reputationScore: string | number | null;
+    };
+  };
+}
+
+export function SkillCard({ skill }: SkillCardProps) {
   return (
-    <div className="group relative bg-surface-container-lowest p-7 rounded-[2.5rem] border border-outline-variant/10 transition-all duration-500 hover:shadow-[0_32px_64px_-16px_rgba(var(--primary-rgb),0.15)] hover:-translate-y-2 flex flex-col h-full overflow-hidden">
-      {/* 1. Header: Catégorie & Note */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="px-4 py-1.5 rounded-full bg-secondary/10 text-secondary text-[10px] font-black uppercase tracking-widest border border-secondary/5">
-          {skill.category}
-        </div>
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high/50 text-on-surface font-bold text-xs">
-          <Star size={14} className="text-amber-500 fill-amber-500" />
-          <span>{skill.mentor?.reputationScore || "5.0"}</span>
-        </div>
-      </div>
-
-      {/* 2. Corps: Titre & Description */}
-      <div className="space-y-4 mb-8">
-        <h3 className="font-headline text-2xl font-black text-on-surface leading-tight group-hover:text-primary transition-colors line-clamp-2 italic font-serif">
-          {skill.title}
-        </h3>
-        <p className="text-on-surface-variant/70 text-sm leading-relaxed line-clamp-3 font-medium">
-          {skill.description}
-        </p>
-      </div>
-
-      {/* 3. Footer: Mentor & Action */}
-      <div className="mt-auto pt-6 border-t border-outline-variant/5">
-        <div className="flex items-center justify-between">
-          {/* Info Mentor */}
-          <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 shrink-0 overflow-hidden rounded-xl bg-surface-container-highest shadow-inner">
-              <Image
-                alt={skill.mentor?.name || "Mentor"}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-110"
-                src={skill.mentor?.image || "/avatar-placeholder.png"}
-              />
-            </div>
-            <div>
-              <p className="text-xs font-black text-on-surface tracking-tight">
-                {skill.mentor?.name}
-              </p>
-              <div className="flex items-center gap-2 text-[10px] font-bold text-outline uppercase tracking-tighter">
-                <Timer size={10} />
-                <span>{skill.duration} MIN</span>
-              </div>
-            </div>
+    <Link href={`/skills/${skill.id}`} className="group block h-full">
+      <div className="relative flex flex-col h-full p-6 rounded-[2.5rem] bg-surface border border-outline-variant/10 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 overflow-hidden">
+        {/* --- Header : Catégorie & Note --- */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="px-3 py-1 rounded-full bg-surface-container-high border border-outline-variant/5">
+            <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
+              {skill.category}
+            </span>
           </div>
+          <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-amber-500/5 text-amber-600">
+            <Star size={12} fill="currentColor" className="text-amber-500" />
+            <span className="text-xs font-black">
+              {Number(skill.mentor.reputationScore).toFixed(1)}
+            </span>
+          </div>
+        </div>
 
-          {/* Prix en Tokens */}
-          <div className="flex flex-col items-end">
-            <div className="flex items-center gap-1.5 text-primary">
-              <span className="text-xl font-black font-headline tracking-tighter">
-                {skill.tokenCost}
+        {/* --- Title --- */}
+        <div className="relative mb-6">
+          <h3 className="text-2xl font-headline font-black leading-[1.1] text-on-surface group-hover:text-primary transition-colors italic tracking-tight line-clamp-2">
+            {skill.title}
+          </h3>
+        </div>
+
+        {/* --- Mentor Section --- */}
+        <div className="flex items-center gap-3 mb-8">
+          <div className="relative w-9 h-9 rounded-xl overflow-hidden border-2 border-surface-container-high shadow-sm">
+            <Image
+              src={skill.mentor.image || "/avatar-placeholder.png"}
+              alt={skill.mentor.name}
+              fill
+              className="object-cover group-hover:scale-110 transition-transform duration-500"
+            />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[10px] uppercase font-black text-outline leading-none mb-1">
+              Mentor
+            </span>
+            <span className="text-xs font-bold text-on-surface-variant">
+              {skill.mentor.name}
+            </span>
+          </div>
+        </div>
+
+        {/* --- Footer : Stats & Price --- */}
+        <div className="mt-auto pt-6 border-t border-outline-variant/5 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5 text-outline">
+              <Clock size={14} strokeWidth={2.5} />
+              <span className="text-xs font-black uppercase tracking-tighter">
+                {skill.duration}m
               </span>
-              <Coins size={16} strokeWidth={2.5} />
             </div>
-            <p className="text-[8px] font-black uppercase tracking-[0.2em] text-outline opacity-50">
-              per session
-            </p>
+          </div>
+
+          {/* Badge de prix style "Token" */}
+          <div className="flex items-center gap-2 bg-on-surface text-surface px-4 py-2.5 rounded-[1.25rem] group-hover:bg-primary transition-colors duration-300">
+            <Coins
+              size={14}
+              className="text-primary group-hover:text-white transition-colors"
+            />
+            <span className="text-sm font-headline font-black italic tracking-tight">
+              {skill.tokenCost}{" "}
+              <span className="text-[9px] uppercase ml-0.5 opacity-70">
+                Tokens
+              </span>
+            </span>
           </div>
         </div>
 
-        {/* Bouton d'action flottant ou lien complet */}
-        <Link
-          href={`/explore/skills/${skill.id}`}
-          className="mt-6 w-full py-4 bg-surface-container-high text-on-surface rounded-2xl font-headline font-black text-sm flex items-center justify-center gap-2 transition-all hover:bg-on-surface hover:text-surface group-hover:shadow-lg active:scale-95"
-        >
-          Explore Workshop
-          <ArrowUpRight
-            size={18}
-            className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-          />
-        </Link>
+        {/* Décoration Hover : Flèche sortante */}
+        <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300 text-primary">
+          <ArrowUpRight size={20} />
+        </div>
       </div>
-
-      {/* Effet de brillance au survol (Subtile) */}
-      <div className="absolute inset-0 pointer-events-none border-[3px] border-primary/0 group-hover:border-primary/5 rounded-[2.5rem] transition-all duration-500" />
-    </div>
+    </Link>
   );
-};
+}

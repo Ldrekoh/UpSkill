@@ -2,11 +2,12 @@
 
 import { db } from "@/db/drizzle";
 import { skills, user } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, like } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "./Users";
+import { SkillValues } from "@/lib/validations/skill";
 
-export const getLatestSkills = async () => {
+export const getLatestSkills = async (limit: number) => {
   try {
     const data = await db.query.skills.findMany({
       where: eq(skills.isActive, true),
@@ -14,7 +15,7 @@ export const getLatestSkills = async () => {
         mentor: true,
       },
       orderBy: (skills, { desc }) => [desc(skills.createdAt)],
-      limit: 8,
+      limit: limit,
     });
     return data;
   } catch (error) {
@@ -38,15 +39,25 @@ export const getAllSkills = async () => {
   }
 };
 
-export const createSkill = async (
-  title: string,
-  description: string,
-  category: string,
-  token_cost: number,
-  duration: number,
-  isActive: boolean,
-  learningOutcomes: string[],
-) => {
+// search skills by title
+export const searchSkills = async (title: string) => {
+  try {
+    const data = await db.query.skills.findMany({
+      where: like(skills.title, `%${title}%`),
+      with: {
+        mentor: true,
+      },
+      orderBy: (skills, { desc }) => [desc(skills.createdAt)],
+    });
+
+    return data;
+  } catch (error) {
+    console.error("Error searching skills:", error);
+    return [];
+  }
+};
+
+export const createSkill = async (values: SkillValues) => {
   try {
     const { currentUser } = await getCurrentUser();
 
@@ -54,31 +65,37 @@ export const createSkill = async (
       return { success: false, message: "You must be logged in" };
     }
 
+    // On utilise le spread operator (...) pour passer toutes les valeurs d'un coup
+    // en s'assurant que les noms correspondent à ton schéma Drizzle
     const [newSkill] = await db
       .insert(skills)
       .values({
-        title,
-        description,
-        category,
-        tokenCost: token_cost,
-        duration,
-        isActive,
+        title: values.title,
+        description: values.description,
+        category: values.category,
+        tokenCost: values.tokenCost,
+        duration: values.duration,
+        isActive: values.isActive,
+        learningOutcomes: values.learningOutcomes,
         mentorId: currentUser.id,
-        learningOutcomes,
       })
       .returning();
 
-    revalidatePath("/explore");
-    revalidatePath("/dashboard/my-skills");
+    // Revalidation des chemins pour mettre à jour le cache Next.js
+    revalidatePath("/skills");
+    revalidatePath("/dashboard");
 
     return {
       success: true,
-      message: "Skill created successfully",
-      skill: newSkill,
+      message: "Workshop published successfully!",
+      data: newSkill,
     };
   } catch (error) {
     console.error("Error creating skill:", error);
-    return { success: false, message: "Failed to create skill" };
+    return {
+      success: false,
+      message: "Failed to create skill. Check your database constraints.",
+    };
   }
 };
 
@@ -126,45 +143,47 @@ export const getSkillById = async (id: string) => {
   }
 };
 
-export const updateSkill = async (id: string, updates: any) => {
+export const updateSkill = async (
+  id: string,
+  updates: Partial<SkillValues>,
+) => {
   try {
     const { currentUser } = await getCurrentUser();
     if (!currentUser) return { success: false, message: "Unauthorized" };
 
-    // 1. Vérification de propriété
-    const existingSkill = await db.query.skills.findFirst({
-      where: and(eq(skills.id, id), eq(skills.mentorId, currentUser.id)),
-    });
+    // 1. On vérifie la propriété et on update en une seule fois pour l'efficacité
+    // Utiliser .where(and(...)) directement dans l'update est plus performant
+    const [updatedSkill] = await db
+      .update(skills)
+      .set({
+        title: updates.title,
+        description: updates.description,
+        category: updates.category,
+        tokenCost: updates.tokenCost,
+        duration: updates.duration,
+        isActive: updates.isActive,
+        learningOutcomes: updates.learningOutcomes,
+      })
+      .where(and(eq(skills.id, id), eq(skills.mentorId, currentUser.id)))
+      .returning();
 
-    if (!existingSkill) {
+    if (!updatedSkill) {
       return {
         success: false,
-        message: "Skill not found or unauthorized",
+        message: "Skill not found or you're not the owner",
       };
     }
 
-    // 2. Nettoyage des données (évite d'écraser avec du vide ou null)
-    const cleanData = Object.entries(updates).reduce(
-      (acc: any, [key, value]) => {
-        if (value !== undefined && value !== null && value !== "") {
-          acc[key] = value;
-        }
-        return acc;
-      },
-      {},
-    );
-
-    // 3. Update
-    const [updatedSkill] = await db
-      .update(skills)
-      .set(cleanData)
-      .where(eq(skills.id, id))
-      .returning();
-
+    // 2. Revalidation précise
     revalidatePath(`/skills/${id}`);
-    revalidatePath("/explore");
+    revalidatePath("/skills"); // Ton catalogue principal
+    revalidatePath("/dashboard");
 
-    return { success: true, skill: updatedSkill };
+    return {
+      success: true,
+      message: "Workshop updated!",
+      skill: updatedSkill,
+    };
   } catch (error) {
     console.error("Error updating skill:", error);
     return { success: false, message: "Update failed" };

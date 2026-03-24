@@ -2,7 +2,7 @@
 
 import { db } from "@/db/drizzle";
 import { reviews, bookings, user } from "@/db/schema";
-import { eq, avg, and, sql } from "drizzle-orm";
+import { eq, avg, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "./Users";
 

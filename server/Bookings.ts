@@ -2,7 +2,7 @@
 
 import { db } from "@/db/drizzle";
 import { bookings, skills, transactions, user, reviews } from "@/db/schema";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, not, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/server/Users";
 
@@ -317,7 +317,7 @@ export const submitReview = async (
       comment,
     });
 
-    revalidatePath("/dashboard");
+    revalidatePath(`/skills/${booking.skillId}`);
 
     return { success: true, message: "Review submitted. Thank you!" };
   } catch (error) {
@@ -327,5 +327,130 @@ export const submitReview = async (
       success: false,
       message: "You have already reviewed this session.",
     };
+  }
+};
+
+export const hasUserBookedSkill = async (userId: string, skillId: string) => {
+  const booking = await db.query.bookings.findFirst({
+    where: and(
+      eq(bookings.learnerId, userId),
+      eq(bookings.skillId, skillId),
+      not(eq(bookings.status, "cancelled")),
+    ),
+  });
+  return !!booking;
+};
+
+export const getMyBookings = async () => {
+  const { currentUser } = await getCurrentUser();
+  const userId = currentUser?.id;
+
+  if (!userId) {
+    return {
+      success: false,
+      message: "User not authenticated",
+      learning: [],
+      teaching: [],
+    };
+  }
+  try {
+    // 1. Bookings en tant qu'élève (Learning)
+    const learning = await db.query.bookings.findMany({
+      where: eq(bookings.learnerId, userId),
+      with: {
+        skill: { with: { mentor: true } },
+      },
+      orderBy: (bookings, { desc }) => [desc(bookings.createdAt)],
+    });
+
+    // 2. Bookings en tant que mentor (Teaching)
+    const teaching = await db.query.bookings.findMany({
+      where: eq(bookings.mentorId, userId),
+      with: {
+        skill: true,
+        learner: true,
+      },
+      orderBy: (bookings, { desc }) => [desc(bookings.createdAt)],
+    });
+
+    return { success: true, learning, teaching, userId };
+  } catch (error) {
+    const err = error as Error;
+    return {
+      success: false,
+      message: err.message,
+      learning: [],
+      teaching: [],
+    };
+  }
+};
+
+export const autoReleaseTokens = async (bookingId: string) => {
+  const { currentUser } = await getCurrentUser();
+  if (!currentUser) return { success: false, message: "Unauthorized." };
+
+  const booking = await db.query.bookings.findFirst({
+    where: and(
+      eq(bookings.id, bookingId),
+      eq(bookings.mentorId, currentUser.id), // Seul le mentor peut trigger l'auto-release
+      eq(bookings.status, "confirmed"),
+    ),
+    with: { mentor: true },
+  });
+
+  if (!booking)
+    return { success: false, message: "Booking not found or not eligible." };
+
+  // VERIFICATION DU DELAI (Ex: 48h après la confirmation)
+  // Note: Idéalement, compare avec la date du cours. Ici on utilise createdAt + 2 jours par défaut.
+  const now = new Date();
+  const waitPeriod = 48 * 60 * 60 * 1000; // 48 heures en ms
+  const eligibleDate = new Date(booking.createdAt.getTime() + waitPeriod);
+
+  if (now < eligibleDate) {
+    return {
+      success: false,
+      message: "You must wait 48h after the booking before claiming tokens.",
+    };
+  }
+
+  // REUTILISATION DE TA LOGIQUE DE COMPLETION
+  try {
+    await db.transaction(async (tx) => {
+      // 1. Créditer le mentor
+      await tx
+        .update(user)
+        .set({
+          tokenBalance: sql`${user.tokenBalance} + ${booking.tokenAmount}`,
+          totalSessions: sql`${user.totalSessions} + 1`,
+        })
+        .where(eq(user.id, booking.mentorId));
+
+      // 2. Incrémenter sessions élève
+      await tx
+        .update(user)
+        .set({ totalSessions: sql`${user.totalSessions} + 1` })
+        .where(eq(user.id, booking.learnerId));
+
+      // 3. Statut Completed
+      await tx
+        .update(bookings)
+        .set({ status: "completed", completedAt: new Date() })
+        .where(eq(bookings.id, bookingId));
+
+      // 4. Log Transaction
+      await tx.insert(transactions).values({
+        userId: booking.mentorId,
+        amount: booking.tokenAmount,
+        type: "booking_credit",
+        bookingId: booking.id,
+        description: `Auto-release: Session completed (48h delay passed)`,
+      });
+    });
+
+    revalidatePath("/dashboard/bookings");
+    return { success: true, message: "Tokens released successfully!" };
+  } catch (error) {
+    return { success: false, message: "Failed to release tokens." };
   }
 };

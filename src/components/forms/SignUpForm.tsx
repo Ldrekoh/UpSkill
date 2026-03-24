@@ -50,7 +50,7 @@ export const SignUpForm = () => {
 
     if (success) {
       toast.success(message as string);
-      router.push("/dashboard");
+      router.push("/");
     } else {
       toast.error(message as string);
     }

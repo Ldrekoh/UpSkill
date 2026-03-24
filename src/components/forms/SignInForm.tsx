@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Loader2, Lock, Mail } from "@/components/ui/Icons";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -40,7 +40,7 @@ export const SignInForm = () => {
 
     if (success) {
       toast.success(message as string);
-      router.push("/dashboard");
+      router.push("/");
     } else {
       toast.error(message as string);
     }
@@ -192,7 +192,7 @@ export const SignInForm = () => {
             {isLoading ? (
               <Loader2 className="animate-spin" />
             ) : (
-              "Sign In to Atelier"
+              "Sign In to UpSkill"
             )}
           </Button>
         </form>
