@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+⚡️ SkillSwap Project
 
-## Getting Started
+Bienvenue sur la plateforme d'échange de compétences nouvelle génération. Ce projet est propulsé par Next.js 16, Drizzle ORM et Better Auth.
+🚀 Démarrage Rapide
 
-First, run the development server:
+1. Installation
 
-```bash
+Clone le dépôt et installe les dépendances :
+Bash
+
+git clone <https://github.com/Ldrekoh/UpSkill.git>
+cd <UpSkill>
+npm install
+
+2. Configuration de l'environnement
+
+Crée un fichier .env.local à la racine du projet et ajoute les variables suivantes :
+Extrait de code
+
+# Database Neon
+
+DATABASE_URL="votre_url_de_base_de_donnees"
+
+# Better Auth Configuration
+
+BETTER_AUTH_SECRET="votre_secret_généré"
+BETTER_AUTH_URL="http://localhost:3000"
+
+# Autres variables (si nécessaire)
+
+# NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
+    Note : Vous pouvez générer un secret pour BETTER_AUTH_SECRET en utilisant la commande openssl rand -base64 32.
+
+3. Base de données
+
+Préparez votre base de données avec Drizzle :
+Bash
+
+npx drizzle-kit push # Pour pousser le schéma directement
+
+# ou
+
+npx drizzle-kit generate
+npx drizzle-kit migrate
+
+4. Lancement
+
+Lancez le serveur de développement :
+Bash
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrez http://localhost:3000 pour voir le résultat.
+🛠 Stack Technique
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+    Framework : Next.js 15 (App Router)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+    Auth : Better Auth
 
-## Learn More
+    ORM : Drizzle ORM
 
-To learn more about Next.js, take a look at the following resources:
+    Styling : Tailwind CSS + Shadcn/UI
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    Validation : Zod + React Hook Form
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+📖 Fonctionnalités Clés
 
-## Deploy on Vercel
+    Système d'Escrow : Les tokens sont sécurisés jusqu'à la fin de la session.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+    Validation Mentor : Le mentor doit accepter manuellement les demandes.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    Auto-Release : Protection du mentor si l'élève oublie de valider la session.
+
+    UI Adaptive : Design soigné avec gestion des états connectés/déconnectés.
+
+🏗 Structure du projet
+
+    /app : Routes et pages Next.js.
+
+    /components : Composants UI réutilisables (Client & Server).
+
+    /db : Schémas Drizzle et configuration de la base de données.
+
+    /server : Server Actions pour la logique métier (Bookings, Skills, Users).
+
+    /lib : Utilitaires et schémas de validation Zod.
+
+🌐 Déploiement
+
+La façon la plus simple de déployer est d'utiliser la plateforme Vercel :
+
+    Poussez votre code sur GitHub.
+
+    Importez le projet sur Vercel.
+
+    Configurez les mêmes variables d'environnement que dans votre .env.local.
