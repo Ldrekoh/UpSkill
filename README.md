@@ -1,97 +1,116 @@
-⚡️ SkillSwap Project
+# ⚡ SkillSwap
 
-Bienvenue sur la plateforme d'échange de compétences nouvelle génération. Ce projet est propulsé par Next.js 16, Drizzle ORM et Better Auth.
-🚀 Démarrage Rapide
+> **La plateforme d'échange de compétences nouvelle génération.**
+> Connecte mentors et apprenants via un système de tokens sécurisé, une validation manuelle et une UI pensée pour l'expérience.
 
-1. Installation
+---
 
-Clone le dépôt et installe les dépendances :
-Bash
+## 🛠 Stack Technique
 
-git clone <https://github.com/Ldrekoh/UpSkill.git>
-cd <UpSkill>
+| Couche           | Technologie              |
+| ---------------- | ------------------------ |
+| Framework        | Next.js 15 (App Router)  |
+| Authentification | Better Auth              |
+| ORM              | Drizzle ORM              |
+| Base de données  | Neon (PostgreSQL)        |
+| Styling          | Tailwind CSS + shadcn/ui |
+| Validation       | Zod + React Hook Form    |
+
+---
+
+## 🚀 Démarrage Rapide
+
+### 1. Cloner le dépôt
+
+```bash
+git clone https://github.com/Ldrekoh/UpSkill.git
+cd UpSkill
 npm install
+```
 
-2. Configuration de l'environnement
+### 2. Variables d'environnement
 
-Crée un fichier .env.local à la racine du projet et ajoute les variables suivantes :
-Extrait de code
+Crée un fichier `.env.local` à la racine du projet :
 
-# Database Neon
+```env
+# Base de données (Neon)
+DATABASE_URL="postgresql://..."
 
-DATABASE_URL="votre_url_de_base_de_donnees"
-
-# Better Auth Configuration
-
+# Better Auth
 BETTER_AUTH_SECRET="votre_secret_généré"
 BETTER_AUTH_URL="http://localhost:3000"
 
-# Autres variables (si nécessaire)
-
+# (Optionnel)
 # NEXT_PUBLIC_APP_URL="http://localhost:3000"
+```
 
-    Note : Vous pouvez générer un secret pour BETTER_AUTH_SECRET en utilisant la commande openssl rand -base64 32.
+> 💡 Génère un secret sécurisé avec : `openssl rand -base64 32`
 
-3. Base de données
+### 3. Base de données
 
-Préparez votre base de données avec Drizzle :
-Bash
+```bash
+# Option A — Push direct du schéma
+npx drizzle-kit push
 
-npx drizzle-kit push # Pour pousser le schéma directement
-
-# ou
-
+# Option B — Génération + migration
 npx drizzle-kit generate
 npx drizzle-kit migrate
+```
 
-4. Lancement
+### 4. Lancer le serveur
 
-Lancez le serveur de développement :
-Bash
-
+```bash
 npm run dev
+```
 
-Ouvrez http://localhost:3000 pour voir le résultat.
-🛠 Stack Technique
+Ouvre [http://localhost:3000](http://localhost:3000) dans ton navigateur.
 
-    Framework : Next.js 15 (App Router)
+---
 
-    Auth : Better Auth
+## 📦 Structure du projet
 
-    ORM : Drizzle ORM
+```
+UpSkill/
+├── app/          → Routes et pages Next.js (App Router)
+├── components/   → Composants UI réutilisables (Client & Server)
+├── db/           → Schémas Drizzle et configuration BDD
+├── server/       → Server Actions (Bookings, Skills, Users)
+└── lib/          → Utilitaires et schémas de validation Zod
+```
 
-    Styling : Tailwind CSS + Shadcn/UI
+---
 
-    Validation : Zod + React Hook Form
+## 🔑 Fonctionnalités Clés
 
-📖 Fonctionnalités Clés
+### 🔒 Système d'Escrow
 
-    Système d'Escrow : Les tokens sont sécurisés jusqu'à la fin de la session.
+Les tokens sont mis en séquestre dès la réservation et libérés uniquement à la fin de la session validée. Aucun paiement sans accord des deux parties.
 
-    Validation Mentor : Le mentor doit accepter manuellement les demandes.
+### ✅ Validation Mentor
 
-    Auto-Release : Protection du mentor si l'élève oublie de valider la session.
+Le mentor doit accepter manuellement chaque demande de session. Pas de surprise, pas d'imposition.
 
-    UI Adaptive : Design soigné avec gestion des états connectés/déconnectés.
+### ⏱ Auto-Release
 
-🏗 Structure du projet
+Si l'apprenant oublie de valider la session, un mécanisme de libération automatique protège le mentor et garantit sa rémunération.
 
-    /app : Routes et pages Next.js.
+### 🎨 UI Adaptive
 
-    /components : Composants UI réutilisables (Client & Server).
+Interface soignée avec gestion des états connecté / déconnecté, composants réactifs et design cohérent sur tous les écrans.
 
-    /db : Schémas Drizzle et configuration de la base de données.
+---
 
-    /server : Server Actions pour la logique métier (Bookings, Skills, Users).
+## 🌐 Déploiement
 
-    /lib : Utilitaires et schémas de validation Zod.
+La manière la plus simple de déployer est via [Vercel](https://vercel.com) :
 
-🌐 Déploiement
+1. Pousse ton code sur GitHub
+2. Importe le projet sur [vercel.com](https://vercel.com)
+3. Configure les variables d'environnement identiques à ton `.env.local`
+4. Déploie 🚀
 
-La façon la plus simple de déployer est d'utiliser la plateforme Vercel :
+---
 
-    Poussez votre code sur GitHub.
+## 📄 Licence
 
-    Importez le projet sur Vercel.
-
-    Configurez les mêmes variables d'environnement que dans votre .env.local.
+Ce projet est open source. Voir [LICENSE](./LICENSE) pour plus de détails.
